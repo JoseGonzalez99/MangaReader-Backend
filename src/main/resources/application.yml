@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: JaityMangaReader
+  profiles:
+    active: dev
+
+app:
+  jwt:
+    expiration: 3600000         # 1 hora
+    refresh-expiration: 604800000 # 7 d�as
+  audit:
+    ttl-days: 0

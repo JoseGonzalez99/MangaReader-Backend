@@ -1,0 +1,33 @@
+spring:
+  application:
+    name: JaityMangaReader
+
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/jaity_db
+
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+
+  security:
+    user:
+      name: admin
+      password: admin
+
+app:
+  jwt:
+    secret: ${SECRET}
+    expiration: 3600000       # 1h access token (en ms)
+    refresh-expiration: 604800000  # 7 días (en ms)
+
+
+logging:
+  level:
+    org.springdoc: DEBUG
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method

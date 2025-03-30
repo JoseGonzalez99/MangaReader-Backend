@@ -1,0 +1,19 @@
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+  data:
+    mongodb:
+      uri: mongodb+srv://usuario:clave@cluster.mongodb.net/jaity_prod
+
+  security:
+    user:
+      name:
+      password:  # ⚠️ No uses esto en real sin encriptación
+
+app:
+  jwt:
+    secret: ${JWT_SECRET} # usa variable de entorno
+  audit:
+    ttl-days: 90          # guarda logs por 90 días
