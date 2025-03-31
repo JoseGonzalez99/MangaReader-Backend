@@ -1,0 +1,35 @@
+services:
+  mongo:
+    image: mongo:7
+    container_name: jaity_mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - jaity-net
+
+  postgres:
+    image: postgres:15
+    container_name: jaity_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: manga_db
+      POSTGRES_USER: jaity
+      POSTGRES_PASSWORD: secret123
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-scripts:/docker-entrypoint-initdb.d
+    networks:
+      - jaity-net
+
+volumes:
+  mongo_data:
+  postgres_data:
+
+networks:
+  jaity-net:
+    driver: bridge

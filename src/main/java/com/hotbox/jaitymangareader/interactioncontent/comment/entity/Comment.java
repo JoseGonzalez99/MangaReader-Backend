@@ -17,8 +17,12 @@ public class Comment {
     private String id;
 
     private String userId;
+
     private String mangaId;
-    private String chapterId; // Puede ser null
+
+    // ⚠️ Referencia opcional al capítulo lógico
+    private String chapterId; // Puede ser null si es un comentario general
+
     private String content;
 
     private Instant createdAt;

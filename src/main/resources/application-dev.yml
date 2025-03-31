@@ -8,8 +8,8 @@ spring:
 
   datasource:
     url: jdbc:postgresql://localhost:5432/manga_db
-    username: tu_usuario
-    password: tu_contraseña
+    username: jaity
+    password: secret123
   jpa:
     hibernate:
       ddl-auto: validate
@@ -19,9 +19,6 @@ spring:
         format_sql: true
     database: postgresql
 
-  autoconfigure:
-    exclude: org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
-
   security:
     user:
       name: admin
@@ -29,7 +26,7 @@ spring:
 
 app:
   jwt:
-    secret: ${SECRET}
+    secret: fd8a6e450e3484def005414adbf5849b1a875a0f06e65127b88eb9aa8da71739b272977fcb9cb7c323d52f79e53de1060137ffccb0b3f858fb77ed98a6158c7f8ecaf353d429161804b1ed66673985a9854356a4cad68e4e0ae7de24bcd41a06f2460357f5cab9951f76d9cf130971b4b13f6121a59e5f402308471e7eab8f060b16c57062f0d89e6094e461113a33c7bfd9d2487d72d69ba18bcbabe1d36aa5592cbc2e0ce8906655c8c7fee92a543b616bb0ff618186fb72b25d45e9b7e76bfbd2829a573965b36b55d6838e03aec624437a49e924339816099b16673abfd1fc1e35e9085dc43618fcc81e59d91d01f40e3ef8c98b3d83727e9072193ff5f6
     expiration: 3600000       # 1h access token (en ms)
     refresh-expiration: 604800000  # 7 días (en ms)
 
