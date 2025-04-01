@@ -1,10 +1,15 @@
 package com.hotbox.jaitymangareader.config.swagger;
 
-import io.swagger.v3.oas.models.*;
-import io.swagger.v3.oas.models.info.*;
-import io.swagger.v3.oas.models.security.*;
 import org.springdoc.core.models.GroupedOpenApi;
-import org.springframework.context.annotation.*;
+
+
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.Components;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class OpenApiConfig {
@@ -31,11 +36,47 @@ public class OpenApiConfig {
                 .bearerFormat("JWT");
     }
 
+    // 🔐 Auth y perfil del usuario
     @Bean
-    public GroupedOpenApi publicApi() {
+    public GroupedOpenApi authGroup() {
         return GroupedOpenApi.builder()
-                .group("jaity-api")
-                .pathsToMatch("/api/v1/auth/**", "/api/v1/me/**", "/api/v1/admin/**")
+                .group("auth")
+                .pathsToMatch("/api/v1/auth/**", "/api/v1/me/**")
+                .build();
+    }
+
+    // 👩‍💻 Admin
+    @Bean
+    public GroupedOpenApi adminGroup() {
+        return GroupedOpenApi.builder()
+                .group("admin")
+                .pathsToMatch("/api/v1/admin/**")
+                .build();
+    }
+
+    // 📚 Manga y su contenido
+    @Bean
+    public GroupedOpenApi contentGroup() {
+        return GroupedOpenApi.builder()
+                .group("content")
+                .pathsToMatch(
+                        "/api/v1/mangas/**",
+                        "/api/v1/volumes/**",
+                        "/api/v1/chapters/**",
+                        "/api/v1/pages/**",
+                        "/api/v1/providers/**",
+                        "/api/v1/sources/**")
+                .build();
+    }
+
+    // 🌐 Endpoints públicos sin auth
+    @Bean
+    public GroupedOpenApi publicGroup() {
+        return GroupedOpenApi.builder()
+                .group("public")
+                .pathsToMatch(
+                        "/api/v1/public/pages/**",
+                        "/api/v1/public/sources/**")
                 .build();
     }
 }

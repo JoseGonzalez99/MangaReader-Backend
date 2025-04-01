@@ -24,23 +24,40 @@ public class SecurityConfig {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/v1/auth/**").permitAll()
+                        // 📂 1. Swagger/OpenAPI (acceso libre)
                         .requestMatchers(
-                                "/v3/api-docs/**",
+                                "/swagger-ui.html",
                                 "/swagger-ui/**",
-                                "/swagger-ui.html"
+                                "/v3/api-docs/**"
                         ).permitAll()
 
+                        // 📂 2. Endpoints públicos de manga/páginas
+                        .requestMatchers(
+                                "/api/v1/public/**"
+                        ).permitAll()
+
+                        // 📂 3. Auth y registro (acceso libre)
+                        .requestMatchers("/api/v1/auth/**").permitAll()
+
+                        // 🛡️ 4. Zona administrativa (requiere STAFF)
                         .requestMatchers("/api/v1/admin/**").hasRole("STAFF")
+
+                        // ✅ 5. Todo lo demás requiere autenticación (ej. /me, /mangas, /chapters, etc.)
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-                .headers(
-                        headers -> headers
-                                .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)
-                                .httpStrictTransportSecurity( hstsConfig -> hstsConfig.includeSubDomains(true).preload(true).maxAgeInSeconds(31536000)
-                                ))                .build();
+
+                .headers(headers -> headers
+                        .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)
+                        .httpStrictTransportSecurity(hsts -> hsts
+                                .includeSubDomains(true)
+                                .preload(true)
+                                .maxAgeInSeconds(31536000)
+                        )
+                )
+                .build();
     }
+
 
 
     @Bean

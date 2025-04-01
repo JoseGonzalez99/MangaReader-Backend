@@ -1,5 +1,6 @@
 package com.hotbox.jaitymangareader.content.chapter.controller;
 
+import com.hotbox.jaitymangareader.content.chapter.dto.AvailableSourceView;
 import com.hotbox.jaitymangareader.content.chapter.entity.ChapterSource;
 import com.hotbox.jaitymangareader.content.chapter.service.ChapterSourceService;
 import com.hotbox.jaitymangareader.core.utils.ResponseUtil;
@@ -12,18 +13,19 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/v1/chapters")
+@RequestMapping("/api/v1/public/sources")
 @RequiredArgsConstructor
 public class ChapterSourcePublicController {
 
     private final ChapterSourceService chapterSourceService;
 
     @GetMapping("/{chapterId}/available-sources")
-    public ResponseEntity<?> getAvailableSources(
-            @PathVariable UUID chapterId,
-            HttpServletRequest request) {
-
+    public ResponseEntity<?> getAvailableSources(@PathVariable UUID chapterId, HttpServletRequest req) {
         List<ChapterSource> sources = chapterSourceService.getAvailableSources(chapterId);
-        return ResponseUtil.success(sources, "Fuentes disponibles encontradas", request);
+        List<AvailableSourceView> views = sources.stream()
+                .map(AvailableSourceView::from)
+                .toList();
+        return ResponseUtil.success(views, "Fuentes disponibles encontradas", req);
     }
+
 }

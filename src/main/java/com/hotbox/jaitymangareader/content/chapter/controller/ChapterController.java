@@ -1,5 +1,6 @@
 package com.hotbox.jaitymangareader.content.chapter.controller;
 
+import com.hotbox.jaitymangareader.content.chapter.dto.ChapterPublicView;
 import com.hotbox.jaitymangareader.content.chapter.entity.Chapter;
 import com.hotbox.jaitymangareader.content.chapter.service.ChapterService;
 import com.hotbox.jaitymangareader.core.utils.ResponseUtil;
@@ -21,20 +22,24 @@ public class ChapterController {
     private final ChapterService chapterService;
 
     @GetMapping("/volumes/{volumeId}/chapters")
-    public ResponseEntity<?> listByVolume(
+    public ResponseEntity<?> getByVolume(
             @PathVariable UUID volumeId,
-            HttpServletRequest request) {
-
+            HttpServletRequest req
+    ) {
         List<Chapter> chapters = chapterService.getByVolume(volumeId);
-        return ResponseUtil.success(chapters, "Capítulos encontrados", request);
+        List<ChapterPublicView> views = chapters.stream()
+                .map(ChapterPublicView::from)
+                .toList();
+        return ResponseUtil.success(views, "Capítulos encontrados", req);
     }
 
     @GetMapping("/chapters/{id}")
-    public ResponseEntity<?> getChapter(
+    public ResponseEntity<?> getById(
             @PathVariable UUID id,
-            HttpServletRequest request) {
-
-        return ResponseUtil.success(chapterService.getById(id), "Capítulo encontrado", request);
+            HttpServletRequest req
+    ) {
+        ChapterPublicView view = ChapterPublicView.from(chapterService.getById(id));
+        return ResponseUtil.success(view, "Capítulo encontrado", req);
     }
 
     @PostMapping("/admin/volumes/{volumeId}/chapters")
@@ -42,19 +47,19 @@ public class ChapterController {
     public ResponseEntity<?> create(
             @PathVariable UUID volumeId,
             @RequestBody @Valid Chapter chapter,
-            HttpServletRequest request) {
-
+            HttpServletRequest req
+    ) {
         Chapter created = chapterService.create(volumeId, chapter);
-        return ResponseUtil.created(created, "Capítulo creado correctamente", request);
+        return ResponseUtil.created(created, "Capítulo creado correctamente", req);
     }
 
     @DeleteMapping("/admin/chapters/{id}")
     @PreAuthorize("hasRole('STAFF')")
     public ResponseEntity<?> delete(
             @PathVariable UUID id,
-            HttpServletRequest request) {
-
+            HttpServletRequest req
+    ) {
         chapterService.delete(id);
-        return ResponseUtil.noContent("Capítulo eliminado", request);
+        return ResponseUtil.noContent("Capítulo eliminado", req);
     }
 }

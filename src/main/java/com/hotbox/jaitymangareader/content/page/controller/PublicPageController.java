@@ -1,5 +1,6 @@
 package com.hotbox.jaitymangareader.content.page.controller;
 
+import com.hotbox.jaitymangareader.content.page.dto.PagePublicView;
 import com.hotbox.jaitymangareader.content.page.entity.Page;
 import com.hotbox.jaitymangareader.content.page.service.PageService;
 import com.hotbox.jaitymangareader.core.utils.ResponseUtil;
@@ -14,7 +15,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/v1/pages")
+@RequestMapping("/api/v1/public/pages")
 @RequiredArgsConstructor
 public class PublicPageController {
 
@@ -28,6 +29,11 @@ public class PublicPageController {
             HttpServletRequest request) {
 
         List<Page> pages = pageService.findByChapterAndLanguage(chapterId, lang, providerId);
-        return ResponseUtil.success(pages, "Páginas obtenidas correctamente", request);
+        var views = pages.stream()
+                .map(PagePublicView::from)
+                .toList();
+
+        return ResponseUtil.success(views, "Páginas obtenidas correctamente", request);
     }
 }
+

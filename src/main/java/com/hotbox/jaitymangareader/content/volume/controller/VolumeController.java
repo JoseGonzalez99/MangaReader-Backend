@@ -1,5 +1,6 @@
 package com.hotbox.jaitymangareader.content.volume.controller;
 
+import com.hotbox.jaitymangareader.content.volume.dto.VolumePublicView;
 import com.hotbox.jaitymangareader.content.volume.entity.Volume;
 import com.hotbox.jaitymangareader.content.volume.service.VolumeService;
 import com.hotbox.jaitymangareader.core.utils.ResponseUtil;
@@ -26,7 +27,10 @@ public class VolumeController {
             HttpServletRequest request) {
 
         List<Volume> volumes = volumeService.getByManga(mangaId);
-        return ResponseUtil.success(volumes, "Volúmenes encontrados", request);
+        List<VolumePublicView> views = volumes.stream()
+                .map(VolumePublicView::from)
+                .toList();
+        return ResponseUtil.success(views, "Volúmenes encontrados", request);
     }
 
     @GetMapping("/volumes/{id}")
@@ -34,7 +38,8 @@ public class VolumeController {
             @PathVariable UUID id,
             HttpServletRequest request) {
 
-        return ResponseUtil.success(volumeService.getById(id), "Volumen encontrado", request);
+        VolumePublicView view = VolumePublicView.from(volumeService.getById(id));
+        return ResponseUtil.success(view, "Volumen encontrado", request);
     }
 
     @PostMapping("/admin/mangas/{mangaId}/volumes")
