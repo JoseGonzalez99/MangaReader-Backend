@@ -36,6 +36,17 @@ public class ChapterSource {
 
     private boolean isActive;
 
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = Instant.now();
+        this.updatedAt = Instant.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = Instant.now();
+    }
+
     private Instant createdAt;
     private Instant updatedAt;
 

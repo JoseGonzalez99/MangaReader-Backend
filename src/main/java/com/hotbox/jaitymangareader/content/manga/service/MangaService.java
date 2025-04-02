@@ -1,5 +1,7 @@
 package com.hotbox.jaitymangareader.content.manga.service;
 
+import com.hotbox.jaitymangareader.content.manga.dto.MangaCreateRequest;
+import com.hotbox.jaitymangareader.content.manga.dto.MangaUpdateRequest;
 import com.hotbox.jaitymangareader.content.manga.entity.Manga;
 import com.hotbox.jaitymangareader.content.manga.repository.MangaRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -24,7 +26,25 @@ public class MangaService {
                 .orElseThrow(() -> new EntityNotFoundException("Manga no encontrado"));
     }
 
-    public Manga create(Manga manga) {
+    public Manga create(MangaCreateRequest req) {
+        Manga manga = Manga.builder()
+                .title(req.title())
+                .author(req.author())
+                .description(req.description())
+                .coverUrl(req.coverUrl())
+                .faviconUrl(req.faviconUrl())
+                .build();
+
+        return mangaRepo.save(manga);
+    }
+
+    public Manga update(UUID id, MangaUpdateRequest req) {
+        Manga manga = findById(id);
+        manga.setTitle(req.title());
+        manga.setAuthor(req.author());
+        manga.setDescription(req.description());
+        manga.setCoverUrl(req.coverUrl());
+        manga.setFaviconUrl(req.faviconUrl());
         return mangaRepo.save(manga);
     }
 

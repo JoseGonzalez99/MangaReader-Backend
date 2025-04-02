@@ -1,6 +1,8 @@
 package com.hotbox.jaitymangareader.content.chapter.controller;
 
+import com.hotbox.jaitymangareader.content.chapter.dto.ChapterCreateRequest;
 import com.hotbox.jaitymangareader.content.chapter.dto.ChapterPublicView;
+import com.hotbox.jaitymangareader.content.chapter.dto.ChapterUpdateRequest;
 import com.hotbox.jaitymangareader.content.chapter.entity.Chapter;
 import com.hotbox.jaitymangareader.content.chapter.service.ChapterService;
 import com.hotbox.jaitymangareader.core.utils.ResponseUtil;
@@ -24,8 +26,8 @@ public class ChapterController {
     @GetMapping("/volumes/{volumeId}/chapters")
     public ResponseEntity<?> getByVolume(
             @PathVariable UUID volumeId,
-            HttpServletRequest req
-    ) {
+            HttpServletRequest req) {
+
         List<Chapter> chapters = chapterService.getByVolume(volumeId);
         List<ChapterPublicView> views = chapters.stream()
                 .map(ChapterPublicView::from)
@@ -36,8 +38,8 @@ public class ChapterController {
     @GetMapping("/chapters/{id}")
     public ResponseEntity<?> getById(
             @PathVariable UUID id,
-            HttpServletRequest req
-    ) {
+            HttpServletRequest req) {
+
         ChapterPublicView view = ChapterPublicView.from(chapterService.getById(id));
         return ResponseUtil.success(view, "Capítulo encontrado", req);
     }
@@ -46,19 +48,32 @@ public class ChapterController {
     @PreAuthorize("hasRole('STAFF')")
     public ResponseEntity<?> create(
             @PathVariable UUID volumeId,
-            @RequestBody @Valid Chapter chapter,
-            HttpServletRequest req
-    ) {
-        Chapter created = chapterService.create(volumeId, chapter);
-        return ResponseUtil.created(created, "Capítulo creado correctamente", req);
+            @RequestBody @Valid ChapterCreateRequest req,
+            HttpServletRequest httpReq) {
+
+        Chapter created = chapterService.create(volumeId, req);
+        ChapterPublicView view = ChapterPublicView.from(created);
+        return ResponseUtil.created(view, "Capítulo creado correctamente", httpReq);
+    }
+
+    @PutMapping("/admin/chapters/{id}")
+    @PreAuthorize("hasRole('STAFF')")
+    public ResponseEntity<?> update(
+            @PathVariable UUID id,
+            @RequestBody @Valid ChapterUpdateRequest req,
+            HttpServletRequest httpReq) {
+
+        Chapter updated = chapterService.update(id, req);
+        ChapterPublicView view = ChapterPublicView.from(updated);
+        return ResponseUtil.success(view, "Capítulo actualizado", httpReq);
     }
 
     @DeleteMapping("/admin/chapters/{id}")
     @PreAuthorize("hasRole('STAFF')")
     public ResponseEntity<?> delete(
             @PathVariable UUID id,
-            HttpServletRequest req
-    ) {
+            HttpServletRequest req) {
+
         chapterService.delete(id);
         return ResponseUtil.noContent("Capítulo eliminado", req);
     }

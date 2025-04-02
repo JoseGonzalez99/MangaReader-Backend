@@ -1,12 +1,14 @@
 package com.hotbox.jaitymangareader.content.chapter.service;
 
 import com.hotbox.jaitymangareader.content.chapter.dto.AvailableSourceView;
+import com.hotbox.jaitymangareader.content.chapter.dto.ChapterSourceCreateRequest;
 import com.hotbox.jaitymangareader.content.chapter.entity.Chapter;
 import com.hotbox.jaitymangareader.content.chapter.entity.ChapterSource;
 import com.hotbox.jaitymangareader.content.chapter.repository.ChapterRepository;
 import com.hotbox.jaitymangareader.content.chapter.repository.ChapterSourceRepository;
 import com.hotbox.jaitymangareader.content.provider.entity.Provider;
 import com.hotbox.jaitymangareader.content.provider.repository.ProviderRepository;
+import com.hotbox.jaitymangareader.content.provider.service.ProviderService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,21 +23,18 @@ public class ChapterSourceService {
 
     private final ChapterSourceRepository chapterSourceRepo;
     private final ChapterRepository chapterRepo;
-    private final ProviderRepository providerRepo;
 
-    public ChapterSource create(UUID chapterId, UUID providerId, String lang) {
-        Chapter chapter = chapterRepo.findById(chapterId)
-                .orElseThrow(() -> new EntityNotFoundException("Capítulo no encontrado"));
+    private final ChapterService chapterService;
+    private final ProviderService providerService;
 
-        Provider provider = providerRepo.findById(providerId)
-                .orElseThrow(() -> new EntityNotFoundException("Proveedor no encontrado"));
+    public ChapterSource create(ChapterSourceCreateRequest req) {
+        Chapter chapter = chapterService.getById(req.chapterId());
+        Provider provider = providerService.getProviderById(req.providerId());
 
         ChapterSource source = ChapterSource.builder()
                 .chapter(chapter)
                 .provider(provider)
-                .languageCode(lang)
-                .createdAt(Instant.now())
-                .updatedAt(Instant.now())
+                .languageCode(req.languageCode())
                 .isActive(true)
                 .build();
 
@@ -48,6 +47,16 @@ public class ChapterSourceService {
 
         return chapterSourceRepo.findByChapter(chapter);
     }
+
+
+    public ChapterSource findChapterSourceByChapter(UUID chapterSourceId) {
+
+        return chapterSourceRepo.findById(chapterSourceId)
+                .orElseThrow(() -> new EntityNotFoundException("Fuente de capítulo no encontrada"));
+    }
+
+
+
 
     public void toggleActive(UUID sourceId, boolean enable) {
         ChapterSource src = chapterSourceRepo.findById(sourceId)

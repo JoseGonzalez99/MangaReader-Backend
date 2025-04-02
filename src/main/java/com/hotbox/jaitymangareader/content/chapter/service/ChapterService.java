@@ -1,9 +1,12 @@
 package com.hotbox.jaitymangareader.content.chapter.service;
 
+import com.hotbox.jaitymangareader.content.chapter.dto.ChapterCreateRequest;
+import com.hotbox.jaitymangareader.content.chapter.dto.ChapterUpdateRequest;
 import com.hotbox.jaitymangareader.content.chapter.entity.Chapter;
 import com.hotbox.jaitymangareader.content.chapter.repository.ChapterRepository;
 import com.hotbox.jaitymangareader.content.volume.entity.Volume;
 import com.hotbox.jaitymangareader.content.volume.repository.VolumeRepository;
+import com.hotbox.jaitymangareader.content.volume.service.VolumeService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,11 +19,13 @@ import java.util.UUID;
 public class ChapterService {
 
     private final ChapterRepository chapterRepo;
-    private final VolumeRepository volumeRepo;
+
+    private final VolumeService volumeService;
 
     public List<Chapter> getByVolume(UUID volumeId) {
-        Volume volume = volumeRepo.findById(volumeId)
-                .orElseThrow(() -> new EntityNotFoundException("Volumen no encontrado"));
+
+        Volume volume = volumeService.getById(volumeId);
+
         return chapterRepo.findByVolume(volume);
     }
 
@@ -29,11 +34,21 @@ public class ChapterService {
                 .orElseThrow(() -> new EntityNotFoundException("Capítulo no encontrado"));
     }
 
-    public Chapter create(UUID volumeId, Chapter chapter) {
-        Volume volume = volumeRepo.findById(volumeId)
-                .orElseThrow(() -> new EntityNotFoundException("Volumen no encontrado"));
 
-        chapter.setVolume(volume);
+
+    public Chapter create(UUID volumeId, ChapterCreateRequest req) {
+        Volume volume = volumeService.getById(volumeId); // asegúrate de tener VolumeService inyectado
+        Chapter chapter = Chapter.builder()
+                .chapterNumber(req.chapterNumber())
+                .title(req.title())
+                .volume(volume)
+                .build();
+        return chapterRepo.save(chapter);
+    }
+    public Chapter update(UUID id, ChapterUpdateRequest req) {
+        Chapter chapter = getById(id);
+        chapter.setChapterNumber(req.chapterNumber());
+        chapter.setTitle(req.title());
         return chapterRepo.save(chapter);
     }
 

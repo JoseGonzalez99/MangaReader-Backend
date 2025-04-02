@@ -28,8 +28,12 @@ public class Manga {
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    private int chaptersCount;
-    private int volumesCount;
+
+    @Builder.Default
+    private int chaptersCount = 0;
+
+    @Builder.Default
+    private int volumesCount = 0;
 
     private String faviconUrl;
     private String coverUrl;
@@ -38,6 +42,16 @@ public class Manga {
 
     private Instant createdAt;
     private Instant updatedAt;
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = Instant.now();
+        this.updatedAt = Instant.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = Instant.now();
+    }
 
     @OneToMany(mappedBy = "manga", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Volume> volumes;

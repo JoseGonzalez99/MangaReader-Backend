@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.UuidGenerator;
 
+import java.time.Instant;
 import java.util.UUID;
 
 @Entity
@@ -28,4 +29,22 @@ public class Provider {
     private String logoUrl;
 
     private boolean isActive = true;
+
+    private Instant createdAt;
+    private Instant updatedAt;
+
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = Instant.now();
+        this.updatedAt = Instant.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = Instant.now();
+    }
+
+
+
 }

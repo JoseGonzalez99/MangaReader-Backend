@@ -1,6 +1,8 @@
 package com.hotbox.jaitymangareader.content.volume.controller;
 
+import com.hotbox.jaitymangareader.content.volume.dto.VolumeCreateRequest;
 import com.hotbox.jaitymangareader.content.volume.dto.VolumePublicView;
+import com.hotbox.jaitymangareader.content.volume.dto.VolumeUpdateRequest;
 import com.hotbox.jaitymangareader.content.volume.entity.Volume;
 import com.hotbox.jaitymangareader.content.volume.service.VolumeService;
 import com.hotbox.jaitymangareader.core.utils.ResponseUtil;
@@ -46,11 +48,25 @@ public class VolumeController {
     @PreAuthorize("hasRole('STAFF')")
     public ResponseEntity<?> create(
             @PathVariable UUID mangaId,
-            @RequestBody @Valid Volume volume,
+            @RequestBody @Valid VolumeCreateRequest req,
             HttpServletRequest request) {
 
-        Volume created = volumeService.create(mangaId, volume);
-        return ResponseUtil.created(created, "Volumen creado correctamente", request);
+        Volume created = volumeService.create(mangaId, req);
+        VolumePublicView view =VolumePublicView.from(created);
+        return ResponseUtil.created(view, "Volumen creado correctamente", request);
+    }
+
+    @PutMapping("/admin/volumes/{id}")
+    @PreAuthorize("hasRole('STAFF')")
+    public ResponseEntity<?> update(
+            @PathVariable UUID id,
+            @RequestBody @Valid VolumeUpdateRequest req,
+            HttpServletRequest request) {
+
+        Volume updated = volumeService.update(id, req);
+        VolumePublicView view =VolumePublicView.from(updated);
+
+        return ResponseUtil.success(view, "Volumen actualizado correctamente", request);
     }
 
     @DeleteMapping("/admin/volumes/{id}")

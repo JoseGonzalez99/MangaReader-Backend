@@ -2,8 +2,12 @@ package com.hotbox.jaitymangareader.content.page.service;
 
 import com.hotbox.jaitymangareader.content.chapter.entity.Chapter;
 import com.hotbox.jaitymangareader.content.chapter.entity.ChapterSource;
-import com.hotbox.jaitymangareader.content.chapter.repository.ChapterRepository;
+
 import com.hotbox.jaitymangareader.content.chapter.repository.ChapterSourceRepository;
+import com.hotbox.jaitymangareader.content.chapter.service.ChapterService;
+import com.hotbox.jaitymangareader.content.chapter.service.ChapterSourceService;
+import com.hotbox.jaitymangareader.content.page.dto.PageCreateRequest;
+import com.hotbox.jaitymangareader.content.page.dto.PageUpdateRequest;
 import com.hotbox.jaitymangareader.content.page.entity.Page;
 import com.hotbox.jaitymangareader.content.page.repository.PageRepository;
 import com.hotbox.jaitymangareader.content.provider.entity.Provider;
@@ -12,7 +16,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -22,9 +26,11 @@ import java.util.UUID;
 public class PageService {
 
     private final PageRepository pageRepo;
-    private final ChapterRepository chapterRepo;
-    private final ChapterSourceRepository chapterSourceRepo;
-    private final ProviderRepository providerRepo;
+    //private final ChapterRepository chapterRepo;//debe ser service
+    private final ChapterSourceRepository chapterSourceRepo;//este deberia ser tambien el service
+    private final ProviderRepository providerRepo;//deberia ser providerService
+    private final ChapterService chapterService;
+    private final ChapterSourceService chapterSourceService;
 
     public List<Page> getByChapterSource(UUID chapterSourceId) {
         ChapterSource source = chapterSourceRepo.findById(chapterSourceId)
@@ -37,14 +43,22 @@ public class PageService {
                 .orElseThrow(() -> new EntityNotFoundException("Página no encontrada"));
     }
 
-    public Page create(UUID chapterSourceId, Page page) {
-        ChapterSource chapterSource = chapterSourceRepo.findById(chapterSourceId)
-                .orElseThrow(() -> new EntityNotFoundException("Fuente de capítulo no encontrada"));
+    public Page create(UUID chapterSourceId, PageCreateRequest req) {
+        ChapterSource source = chapterSourceService.findChapterSourceByChapter(chapterSourceId); // asegúrate de tenerlo inyectado
 
-        page.setChapterSource(chapterSource);
-        page.setCreatedAt(Instant.now());
-        page.setUpdatedAt(Instant.now());
+        Page page = Page.builder()
+                .chapterSource(source)
+                .pageNumber(req.pageNumber())
+                .imageUrl(req.imageUrl())
+                .build();
 
+        return pageRepo.save(page);
+    }
+
+    public Page update(UUID id, PageUpdateRequest req) {
+        Page page = getById(id);
+        page.setPageNumber(req.pageNumber());
+        page.setImageUrl(req.imageUrl());
         return pageRepo.save(page);
     }
 
@@ -56,9 +70,7 @@ public class PageService {
     }
 
     public List<Page> findByChapterAndLanguage(UUID chapterId, String languageCode, UUID optionalProviderId) {
-        Chapter chapter = chapterRepo.findById(chapterId)
-                .orElseThrow(() -> new EntityNotFoundException("Capítulo no encontrado"));
-
+        Chapter chapter = chapterService.getById(chapterId);
         List<ChapterSource> sources;
 
         if (optionalProviderId != null) {

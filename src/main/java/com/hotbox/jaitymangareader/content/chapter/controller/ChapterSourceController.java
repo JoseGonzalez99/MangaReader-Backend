@@ -1,12 +1,13 @@
 package com.hotbox.jaitymangareader.content.chapter.controller;
 
 import com.hotbox.jaitymangareader.content.chapter.dto.AvailableSourceView;
+import com.hotbox.jaitymangareader.content.chapter.dto.ChapterPublicView;
+import com.hotbox.jaitymangareader.content.chapter.dto.ChapterSourceCreateRequest;
 import com.hotbox.jaitymangareader.content.chapter.entity.ChapterSource;
 import com.hotbox.jaitymangareader.content.chapter.service.ChapterSourceService;
 import com.hotbox.jaitymangareader.core.utils.ResponseUtil;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -25,13 +26,12 @@ public class ChapterSourceController {
 
     @PostMapping
     public ResponseEntity<?> create(
-            @RequestParam UUID chapterId,
-            @RequestParam UUID providerId,
-            @RequestParam @NotBlank @Size(max = 10) String lang,
+            @RequestBody @Valid ChapterSourceCreateRequest req,
             HttpServletRequest request) {
 
-        ChapterSource created = chapterSourceService.create(chapterId, providerId, lang);
-        return ResponseUtil.created(created, "Fuente de capítulo registrada", request);
+        ChapterSource created = chapterSourceService.create(req);
+        AvailableSourceView view = AvailableSourceView.from(created);
+        return ResponseUtil.created(view, "Fuente de capítulo registrada", request);
     }
 
     @GetMapping("/by-chapter/{chapterId}")
@@ -46,7 +46,12 @@ public class ChapterSourceController {
         }
 
         List<ChapterSource> list = chapterSourceService.findSourcesByChapter(chapterId);
-        return ResponseUtil.success(list, "Fuentes del capítulo obtenidas", request);
+
+        List<AvailableSourceView> views = list.stream()
+                .map(AvailableSourceView::from)
+                .toList();
+
+        return ResponseUtil.success(views, "Fuentes del capítulo obtenidas", request);
     }
 
     @PatchMapping("/{id}/status")
