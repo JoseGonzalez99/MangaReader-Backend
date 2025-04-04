@@ -12,6 +12,7 @@ import java.util.UUID;
 public interface ChapterSourceRepository extends JpaRepository<ChapterSource, UUID> {
 
     List<ChapterSource> findByChapter(Chapter chapter);
+    List<ChapterSource> findByChapterAndLanguageCode(Chapter chapter, String lang);
 
     List<ChapterSource> findByChapterAndLanguageCodeAndIsActiveTrue(Chapter chapter, String languageCode);
 
