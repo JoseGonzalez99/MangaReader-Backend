@@ -1,7 +1,9 @@
 package com.hotbox.jaitymangareader.interactioncontent.comment.controller;
 
+import com.hotbox.jaitymangareader.content.page.dto.PagePublicView;
 import com.hotbox.jaitymangareader.core.utils.ResponseUtil;
 import com.hotbox.jaitymangareader.interactioncontent.comment.dto.CommentRequest;
+import com.hotbox.jaitymangareader.interactioncontent.comment.dto.CommentView;
 import com.hotbox.jaitymangareader.interactioncontent.comment.entity.Comment;
 import com.hotbox.jaitymangareader.interactioncontent.comment.service.CommentService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -53,5 +55,17 @@ public class CommentController {
         Pageable pageable = PageRequest.of(page, size);
         List<Comment> comments = commentService.getByManga(mangaId, chapterId, pageable);
         return ResponseUtil.success(comments, "Comentarios obtenidos correctamente", httpRequest);
+    }
+
+    @GetMapping
+    public ResponseEntity<?> getMangaComments(
+            @PathVariable String mangaId,
+            HttpServletRequest req) {
+
+        List<Comment> comments = commentService.getByMangaIdOrderByCreatedAtDesc(mangaId);
+
+        List<CommentView> view =  comments.stream().map(CommentView::from).toList();
+
+        return ResponseUtil.success(view, "Comentarios cargados", req);
     }
 }

@@ -10,4 +10,6 @@ public interface CommentRepository extends MongoRepository<Comment, String> {
     List<Comment> findByMangaId(String mangaId, Pageable pageable);
     List<Comment> findByMangaIdAndChapterId(String mangaId, String chapterId, Pageable pageable);
     List<Comment> findByUserId(String userId);
+    List<Comment> findByMangaIdOrderByCreatedAtDesc(String mangaId);
+    
 }

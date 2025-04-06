@@ -46,7 +46,14 @@ public class CommentService {
         return commentRepo.findByMangaId(mangaId, pageable);
     }
 
+    public List<Comment> getByMangaIdOrderByCreatedAtDesc(String mangaId) {
+        return commentRepo.findByMangaIdOrderByCreatedAtDesc(mangaId);
+
+    }
+
     public List<Comment> getByUser(String userId) {
         return commentRepo.findByUserId(userId);
     }
+
+
 }

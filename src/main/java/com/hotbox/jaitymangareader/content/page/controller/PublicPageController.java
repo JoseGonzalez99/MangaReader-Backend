@@ -2,6 +2,7 @@ package com.hotbox.jaitymangareader.content.page.controller;
 
 import com.hotbox.jaitymangareader.content.chapter.entity.Chapter;
 import com.hotbox.jaitymangareader.content.chapter.service.ChapterService;
+import com.hotbox.jaitymangareader.content.page.dto.PagePublicView;
 import com.hotbox.jaitymangareader.content.page.entity.Page;
 import com.hotbox.jaitymangareader.content.page.service.PageService;
 import com.hotbox.jaitymangareader.core.utils.ResponseUtil;
@@ -48,7 +49,9 @@ public class PublicPageController {
                     1 // asumimos que empieza por la página 1
             );
         }
+        List<PagePublicView> view =  pages.stream().map( PagePublicView::from).toList();
 
-        return ResponseUtil.success(pages, "Páginas obtenidas correctamente", request);
+
+        return ResponseUtil.success(view, "Páginas obtenidas correctamente", request);
     }
 }
