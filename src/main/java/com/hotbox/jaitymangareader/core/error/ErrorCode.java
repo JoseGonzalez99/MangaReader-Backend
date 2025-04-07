@@ -4,7 +4,7 @@ import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
 @Getter
-public enum ErrorCode {
+public enum ErrorCode implements BaseErrorCode {
 
     AUTH_INVALID_CREDENTIALS("AUTH-001", "El correo o la contraseña son incorrectos", HttpStatus.UNAUTHORIZED),
     AUTH_ACCOUNT_DISABLED("AUTH-002", "Tu cuenta ha sido desactivada", HttpStatus.FORBIDDEN),

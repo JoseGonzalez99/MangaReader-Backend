@@ -7,7 +7,6 @@ import com.hotbox.jaitymangareader.content.chapter.entity.ChapterSource;
 import com.hotbox.jaitymangareader.content.chapter.repository.ChapterRepository;
 import com.hotbox.jaitymangareader.content.chapter.repository.ChapterSourceRepository;
 import com.hotbox.jaitymangareader.content.provider.entity.Provider;
-import com.hotbox.jaitymangareader.content.provider.repository.ProviderRepository;
 import com.hotbox.jaitymangareader.content.provider.service.ProviderService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;

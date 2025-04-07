@@ -1,5 +1,8 @@
 package com.hotbox.jaitymangareader.user.service;
 
+import com.hotbox.jaitymangareader.core.error.ApiException;
+import com.hotbox.jaitymangareader.core.error.DomainErrorCode;
+import com.hotbox.jaitymangareader.core.error.ErrorCode;
 import com.hotbox.jaitymangareader.user.dto.AppUserDTO;
 import com.hotbox.jaitymangareader.user.entity.AppUser;
 import com.hotbox.jaitymangareader.config.security.Role;
@@ -27,7 +30,7 @@ public class AppUserService {
     // Buscar por ID
     public AppUser getById(String id) {
         return userRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                .orElseThrow(() -> new ApiException(ErrorCode.USER_NOT_FOUND));
     }
 
     // Buscar por email
@@ -38,7 +41,7 @@ public class AppUserService {
     // Crear nuevo usuario
     public AppUser create(AppUserDTO dto) {
         if (userRepo.findByEmail(dto.email()).isPresent()) {
-            throw new RuntimeException("El email ya está en uso");
+            throw new ApiException(ErrorCode.USER_EMAIL_CONFLICT);
         }
 
         AppUser user = AppUser.builder()
@@ -58,7 +61,7 @@ public class AppUserService {
 
         if (!existing.getEmail().equals(dto.email())
                 && userRepo.findByEmail(dto.email()).isPresent()) {
-            throw new RuntimeException("Email ya registrado por otro usuario");
+            throw new ApiException(ErrorCode.USER_EMAIL_CONFLICT);
         }
 
         existing.setEmail(dto.email());
@@ -75,7 +78,7 @@ public class AppUserService {
     // Eliminar
     public void delete(String id) {
         if (!userRepo.existsById(id)) {
-            throw new RuntimeException("Usuario no encontrado");
+            throw new ApiException(ErrorCode.USER_NOT_FOUND);
         }
         userRepo.deleteById(id);
     }

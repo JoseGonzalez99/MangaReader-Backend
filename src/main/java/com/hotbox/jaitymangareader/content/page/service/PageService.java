@@ -8,6 +8,8 @@ import com.hotbox.jaitymangareader.content.page.dto.PageCreateRequest;
 import com.hotbox.jaitymangareader.content.page.dto.PageUpdateRequest;
 import com.hotbox.jaitymangareader.content.page.entity.Page;
 import com.hotbox.jaitymangareader.content.page.repository.PageRepository;
+import com.hotbox.jaitymangareader.core.error.ApiException;
+import com.hotbox.jaitymangareader.core.error.DomainErrorCode;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,7 +27,7 @@ public class PageService {
 
     public List<Page> getByChapterSource(UUID chapterSourceId) {
         ChapterSource source = chapterSourceRepository.findById(chapterSourceId)
-                .orElseThrow(() -> new EntityNotFoundException("ChapterSource no encontrado"));
+                .orElseThrow(() -> new ApiException(DomainErrorCode.CHAPTER_SOURCE_NOT_FOUND));
 
         return pageRepository.findByChapterSource(source);
     }
@@ -40,7 +42,7 @@ public class PageService {
 
     public Page create(UUID chapterSourceId, PageCreateRequest req) {
         ChapterSource source = chapterSourceRepository.findById(chapterSourceId)
-                .orElseThrow(() -> new EntityNotFoundException("ChapterSource no encontrado"));
+                .orElseThrow(() -> new ApiException(DomainErrorCode.CHAPTER_SOURCE_NOT_FOUND));
 
         Page page = new Page();
         page.setImageUrl(req.imageUrl());
@@ -55,7 +57,7 @@ public class PageService {
 
     public Page getById(UUID id) {
         return pageRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Página no encontrada"));
+                .orElseThrow(() -> new ApiException(DomainErrorCode.PAGE_NOT_FOUND));
     }
 
     public List<Page> findByChapterAndLanguage(UUID chapterId, String lang, UUID providerId) {
@@ -66,7 +68,7 @@ public class PageService {
         ChapterSource source = sources.stream()
                 .filter(s -> providerId == null || s.getProvider().getId().equals(providerId))
                 .findFirst()
-                .orElseThrow(() -> new EntityNotFoundException("Fuente de capítulo no encontrada"));
+                .orElseThrow(() ->new ApiException(DomainErrorCode.CHAPTER_SOURCE_NOT_FOUND));
 
         return pageRepository.findByChapterSource(source);
     }

@@ -4,6 +4,8 @@ import com.hotbox.jaitymangareader.content.provider.dto.ProviderCreateRequest;
 import com.hotbox.jaitymangareader.content.provider.dto.ProviderUpdateRequest;
 import com.hotbox.jaitymangareader.content.provider.entity.Provider;
 import com.hotbox.jaitymangareader.content.provider.repository.ProviderRepository;
+import com.hotbox.jaitymangareader.core.error.ApiException;
+import com.hotbox.jaitymangareader.core.error.DomainErrorCode;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -33,12 +35,12 @@ public class ProviderService {
 
     public Provider getProviderById(UUID id ){
         return providerRepo.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Proveedor no encontrado"));
+                .orElseThrow(() -> new ApiException(DomainErrorCode.PROVIDER_NOT_FOUND));
     }
 
     public void toggleStatus(UUID id, boolean enable) {
         Provider provider = providerRepo.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Proveedor no encontrado"));
+                .orElseThrow(() -> new ApiException(DomainErrorCode.PROVIDER_NOT_FOUND));
 
         provider.setActive(enable);
         providerRepo.save(provider);
@@ -46,14 +48,14 @@ public class ProviderService {
 
     public void delete(UUID id) {
         if (!providerRepo.existsById(id)) {
-            throw new EntityNotFoundException("Proveedor no encontrado");
+            throw new ApiException(DomainErrorCode.PROVIDER_NOT_FOUND);
         }
         providerRepo.deleteById(id);
     }
 
     public Provider update(UUID id, ProviderUpdateRequest request) {
         Provider existing = providerRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Proveedor no encontrado"));
+                .orElseThrow(() -> new ApiException(DomainErrorCode.PROVIDER_NOT_FOUND));
 
         existing.setProviderName(request.providerName());
         existing.setProvidedLang(request.providedLang());

@@ -6,6 +6,8 @@ import com.hotbox.jaitymangareader.content.volume.dto.VolumeCreateRequest;
 import com.hotbox.jaitymangareader.content.volume.dto.VolumeUpdateRequest;
 import com.hotbox.jaitymangareader.content.volume.entity.Volume;
 import com.hotbox.jaitymangareader.content.volume.repository.VolumeRepository;
+import com.hotbox.jaitymangareader.core.error.ApiException;
+import com.hotbox.jaitymangareader.core.error.DomainErrorCode;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,7 +25,7 @@ public class VolumeService {
 
     public List<Volume> getByManga(UUID mangaId) {
         Manga manga = mangaRepo.findById(mangaId)
-                .orElseThrow(() -> new EntityNotFoundException("Manga no encontrado"));
+                .orElseThrow(() ->new ApiException(DomainErrorCode.VOLUME_NOT_FOUND));
         return volumeRepo.findByManga(manga);
     }
 
@@ -31,7 +33,7 @@ public class VolumeService {
 
     public Manga getManga(UUID id) {
         return mangaRepo.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Manga no encontrado"));
+                .orElseThrow(() -> new ApiException(DomainErrorCode.MANGA_NOT_FOUND));
     }
 
 
@@ -63,7 +65,7 @@ public class VolumeService {
 
     public void delete(UUID id) {
         if (!volumeRepo.existsById(id)) {
-            throw new EntityNotFoundException("Volumen no encontrado");
+            throw new ApiException(DomainErrorCode.VOLUME_NOT_FOUND);
         }
         volumeRepo.deleteById(id);
     }

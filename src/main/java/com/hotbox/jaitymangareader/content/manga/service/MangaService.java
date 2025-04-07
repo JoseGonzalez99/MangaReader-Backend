@@ -4,7 +4,8 @@ import com.hotbox.jaitymangareader.content.manga.dto.MangaCreateRequest;
 import com.hotbox.jaitymangareader.content.manga.dto.MangaUpdateRequest;
 import com.hotbox.jaitymangareader.content.manga.entity.Manga;
 import com.hotbox.jaitymangareader.content.manga.repository.MangaRepository;
-import jakarta.persistence.EntityNotFoundException;
+import com.hotbox.jaitymangareader.core.error.ApiException;
+import com.hotbox.jaitymangareader.core.error.DomainErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +24,7 @@ public class MangaService {
 
     public Manga findById(UUID id) {
         return mangaRepo.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Manga no encontrado"));
+                .orElseThrow(() -> new ApiException(DomainErrorCode.MANGA_NOT_FOUND));
     }
 
     public Manga create(MangaCreateRequest req) {
@@ -50,7 +51,7 @@ public class MangaService {
 
     public void delete(UUID id) {
         if (!mangaRepo.existsById(id)) {
-            throw new EntityNotFoundException("Manga no encontrado");
+            throw new ApiException(DomainErrorCode.MANGA_NOT_FOUND);
         }
         mangaRepo.deleteById(id);
     }

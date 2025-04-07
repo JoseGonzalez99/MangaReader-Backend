@@ -1,5 +1,6 @@
 package com.hotbox.jaitymangareader.user.controller;
 
+import com.hotbox.jaitymangareader.core.error.ApiException;
 import com.hotbox.jaitymangareader.core.utils.ResponseUtil;
 import com.hotbox.jaitymangareader.user.dto.ReadingEntryView;
 import com.hotbox.jaitymangareader.user.dto.UserPreferencesRequest;
@@ -15,6 +16,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
+
+import static com.hotbox.jaitymangareader.core.error.DomainErrorCode.*;
 
 @RestController
 @RequestMapping("/api/v1/me/context")
@@ -51,12 +54,21 @@ public class UserContextController {
     @GetMapping("/last-read")
     public ResponseEntity<?> lastRead(Principal auth, HttpServletRequest req) {
         UserContext ctx = contextService.getByUserId(auth.getName());
+
+        if (ctx.getLastRead() == null) {
+            throw new ApiException(USER_NO_LAST_READ);
+        }
+
         return ResponseUtil.success(ctx.getLastRead(), "Última lectura cargada", req);
     }
 
     @GetMapping("/history")
     public ResponseEntity<?> getHistory(Principal auth, HttpServletRequest req) {
         UserContext ctx = contextService.getByUserId(auth.getName());
+
+        if (ctx.getReadingHistory() == null || ctx.getReadingHistory().isEmpty()) {
+            throw new ApiException(USER_NO_READING_HISTORY);
+        }
 
         List<ReadingEntryView> views = ctx.getReadingHistory().stream()
                 .map(ReadingEntryView::from)

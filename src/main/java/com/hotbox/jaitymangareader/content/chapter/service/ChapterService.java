@@ -7,6 +7,8 @@ import com.hotbox.jaitymangareader.content.chapter.repository.ChapterRepository;
 import com.hotbox.jaitymangareader.content.volume.entity.Volume;
 import com.hotbox.jaitymangareader.content.volume.repository.VolumeRepository;
 import com.hotbox.jaitymangareader.content.volume.service.VolumeService;
+import com.hotbox.jaitymangareader.core.error.ApiException;
+import com.hotbox.jaitymangareader.core.error.DomainErrorCode;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -31,7 +33,7 @@ public class ChapterService {
 
     public Chapter getById(UUID id) {
         return chapterRepo.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Capítulo no encontrado"));
+                .orElseThrow(() -> new ApiException(DomainErrorCode.CHAPTER_NOT_FOUND));
     }
 
 
@@ -54,7 +56,7 @@ public class ChapterService {
 
     public void delete(UUID id) {
         if (!chapterRepo.existsById(id)) {
-            throw new EntityNotFoundException("Capítulo no encontrado");
+            throw new ApiException(DomainErrorCode.CHAPTER_NOT_FOUND);
         }
         chapterRepo.deleteById(id);
     }

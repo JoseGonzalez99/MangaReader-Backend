@@ -1,5 +1,7 @@
 package com.hotbox.jaitymangareader.interactioncontent.comment.service;
 
+import com.hotbox.jaitymangareader.core.error.ApiException;
+import com.hotbox.jaitymangareader.core.error.DomainErrorCode;
 import com.hotbox.jaitymangareader.interactioncontent.comment.dto.CommentRequest;
 import com.hotbox.jaitymangareader.interactioncontent.comment.entity.Comment;
 import com.hotbox.jaitymangareader.interactioncontent.comment.repository.CommentRepository;
@@ -30,10 +32,10 @@ public class CommentService {
 
     public void delete(String commentId, String userId) {
         Comment comment = commentRepo.findById(commentId)
-                .orElseThrow(() -> new RuntimeException("Comentario no encontrado"));
+                .orElseThrow(() -> new ApiException(DomainErrorCode.COMMENT_NOT_FOUND));
 
         if (!comment.getUserId().equals(userId)) {
-            throw new RuntimeException("No puedes eliminar comentarios de otros usuarios");
+            throw new ApiException(DomainErrorCode.COMMENT_FORBIDDEN);
         }
 
         commentRepo.deleteById(commentId);
