@@ -28,7 +28,7 @@ public class Provider {
 
     private String logoUrl;
 
-    private boolean isActive = true;
+    private boolean isActive;
 
     private Instant createdAt;
     private Instant updatedAt;

@@ -52,28 +52,15 @@ public class UserContextController {
     }
 
     @GetMapping("/last-read")
-    public ResponseEntity<?> lastRead(Principal auth, HttpServletRequest req) {
-        UserContext ctx = contextService.getByUserId(auth.getName());
-
-        if (ctx.getLastRead() == null) {
-            throw new ApiException(USER_NO_LAST_READ);
-        }
-
-        return ResponseUtil.success(ctx.getLastRead(), "Última lectura cargada", req);
+    public ResponseEntity<?> getLastRead(Principal auth,HttpServletRequest request) {
+        String userId = auth.getName();
+        ReadingEntryView lastRead = contextService.getLastReadDetailed(userId);
+        return ResponseUtil.success(lastRead, "Ultimo leido obtenido", request);
     }
 
     @GetMapping("/history")
-    public ResponseEntity<?> getHistory(Principal auth, HttpServletRequest req) {
-        UserContext ctx = contextService.getByUserId(auth.getName());
-
-        if (ctx.getReadingHistory() == null || ctx.getReadingHistory().isEmpty()) {
-            throw new ApiException(USER_NO_READING_HISTORY);
-        }
-
-        List<ReadingEntryView> views = ctx.getReadingHistory().stream()
-                .map(ReadingEntryView::from)
-                .toList();
-
-        return ResponseUtil.success(views, "Historial de lectura", req);
+    public ResponseEntity<?> getReadingHistory(Principal auth,HttpServletRequest request) {
+        List<ReadingEntryView> history = contextService.getReadingHistoryDetailed(auth.getName());
+        return ResponseUtil.success(history, "Historial Obtenido", request);
     }
 }

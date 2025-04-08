@@ -15,7 +15,11 @@ public enum DomainErrorCode implements BaseErrorCode {
 
     // 📖 Capítulo
     CHAPTER_NOT_FOUND("CHAPTER-001", "Capítulo no encontrado", HttpStatus.NOT_FOUND),
+    CHAPTERS_NOT_FOUND("CHAPTER-001", "No se encontraron capítulos para el manga solicitado", HttpStatus.NOT_FOUND),
     CHAPTER_DUPLICATE("CHAPTER-002", "Ya existe un capítulo con ese número", HttpStatus.CONFLICT),
+
+    USER_CONTEXT_NO_LAST_READ("USERCTX-001", "El usuario no tiene ninguna lectura registrada", HttpStatus.NOT_FOUND),
+    USER_CONTEXT_EMPTY_HISTORY("USERCTX-002", "El usuario no tiene historial de lectura", HttpStatus.NOT_FOUND),
 
     // 📄 Página
     PAGE_NOT_FOUND("PAGE-001", "Página no encontrada", HttpStatus.NOT_FOUND),

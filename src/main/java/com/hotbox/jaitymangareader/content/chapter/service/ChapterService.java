@@ -1,6 +1,7 @@
 package com.hotbox.jaitymangareader.content.chapter.service;
 
 import com.hotbox.jaitymangareader.content.chapter.dto.ChapterCreateRequest;
+import com.hotbox.jaitymangareader.content.chapter.dto.ChapterPublicView;
 import com.hotbox.jaitymangareader.content.chapter.dto.ChapterUpdateRequest;
 import com.hotbox.jaitymangareader.content.chapter.entity.Chapter;
 import com.hotbox.jaitymangareader.content.chapter.repository.ChapterRepository;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -35,9 +37,29 @@ public class ChapterService {
         return chapterRepo.findById(id)
                 .orElseThrow(() -> new ApiException(DomainErrorCode.CHAPTER_NOT_FOUND));
     }
+    public List<ChapterPublicView> getChaptersByMangaId(UUID mangaId) {
+        List<Chapter> chapters = chapterRepo.findAllByMangaId(mangaId);
+        if (chapters.isEmpty()) {
+            throw new ApiException(DomainErrorCode.CHAPTERS_NOT_FOUND);
+        }
+        return chapters.stream().map(ChapterPublicView::from).collect(Collectors.toList());
+    }
 
+    public List<ChapterPublicView> getChaptersByMangaIdAndLanguage(UUID mangaId, String languageCode) {
+        List<Chapter> chapters = chapterRepo.findByMangaIdAndLanguage(mangaId, languageCode);
+        if (chapters.isEmpty()) {
+            throw new ApiException(DomainErrorCode.CHAPTERS_NOT_FOUND);
+        }
+        return chapters.stream().map(ChapterPublicView::from).collect(Collectors.toList());
+    }
 
-
+    public List<ChapterPublicView> getChaptersByMangaIdLanguageAndProvider(UUID mangaId, String languageCode, UUID providerId) {
+        List<Chapter> chapters = chapterRepo.findByMangaIdAndLanguageAndProvider(mangaId, languageCode, providerId);
+        if (chapters.isEmpty()) {
+            throw new ApiException(DomainErrorCode.CHAPTERS_NOT_FOUND);
+        }
+        return chapters.stream().map(ChapterPublicView::from).collect(Collectors.toList());
+    }
     public Chapter create(UUID volumeId, ChapterCreateRequest req) {
         Volume volume = volumeService.getById(volumeId); // asegúrate de tener VolumeService inyectado
         Chapter chapter = Chapter.builder()

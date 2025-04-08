@@ -103,3 +103,24 @@ let comment={
     "content": "Buen capitulo bro",
     "createdAt": "2025-04-06T22:13:04.027155976Z"
 }
+
+
+let lastRead ={
+    "mangaId": "a6c84040-cfcd-4a6f-b005-643b96385281",
+    "chapterId": "64fa9123-4b15-4640-afbf-470587d7bd57",
+    "lastPageRead": 1,
+    "lastReadAt": "2025-04-06T23:37:09.914Z",
+    "status": "IN_PROGRESS",
+    "tags": null
+}
+
+let history = [
+    {
+        "mangaId": "a6c84040-cfcd-4a6f-b005-643b96385281",
+        "chapterId": "64fa9123-4b15-4640-afbf-470587d7bd57",
+        "lastPageRead": 1,
+        "lastReadAt": "2025-04-06T23:37:09.914Z",
+        "status": "IN_PROGRESS",
+        "tags": null
+    }
+]

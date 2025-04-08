@@ -1,7 +1,7 @@
 package com.hotbox.jaitymangareader.content.chapter.entity;
 
 import com.hotbox.jaitymangareader.content.volume.entity.Volume;
-import com.hotbox.jaitymangareader.content.page.entity.Page;
+
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.UuidGenerator;
@@ -33,6 +33,8 @@ public class Chapter {
     private Instant createdAt;
     private Instant updatedAt;
 
+    @OneToMany(mappedBy = "chapter", fetch = FetchType.LAZY)
+    private List<ChapterSource> sources;
 
     @PrePersist
     protected void onCreate() {

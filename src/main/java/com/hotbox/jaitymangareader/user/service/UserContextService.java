@@ -1,6 +1,9 @@
 package com.hotbox.jaitymangareader.user.service;
 
+import com.hotbox.jaitymangareader.content.manga.entity.Manga;
+import com.hotbox.jaitymangareader.content.manga.repository.MangaRepository;
 import com.hotbox.jaitymangareader.core.error.ApiException;
+import com.hotbox.jaitymangareader.user.dto.ReadingEntryView;
 import com.hotbox.jaitymangareader.user.entity.Preferences;
 import com.hotbox.jaitymangareader.user.entity.ReadingEntry;
 import com.hotbox.jaitymangareader.user.dto.ReadingStatus;
@@ -10,8 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Optional;
+import java.util.*;
 
 import static com.hotbox.jaitymangareader.core.error.DomainErrorCode.*;
 
@@ -20,7 +22,39 @@ import static com.hotbox.jaitymangareader.core.error.DomainErrorCode.*;
 public class UserContextService {
 
     private final UserContextRepository repository;
+    private final MangaRepository mangaRepository;
 
+
+    public ReadingEntryView getLastReadDetailed(String userId) {
+        UserContext ctx = getByUserId(userId);
+        if (ctx.getLastRead() == null) {
+            throw new ApiException(USER_CONTEXT_NO_LAST_READ);
+        }
+
+        Manga manga = mangaRepository.findById(UUID.fromString(ctx.getLastRead().getMangaId()))
+                .orElseThrow(() -> new ApiException(USER_CONTEXT_NO_LAST_READ));
+
+        return ReadingEntryView.from(ctx.getLastRead(), manga);
+    }
+
+    public List<ReadingEntryView> getReadingHistoryDetailed(String userId) {
+        UserContext ctx = getByUserId(userId);
+
+        List<ReadingEntryView> enriched = ctx.getReadingHistory().stream()
+                .map(entry -> {
+                    Manga manga = mangaRepository.findById(UUID.fromString(entry.getMangaId()))
+                            .orElse(null);
+                    return manga != null ? ReadingEntryView.from(entry, manga) : null;
+                })
+                .filter(Objects::nonNull)
+                .toList();
+
+        if (enriched.isEmpty()) {
+            throw new ApiException(USER_CONTEXT_EMPTY_HISTORY);
+        }
+
+        return enriched;
+    }
     public UserContext getByUserId(String userId) {
         if (userId == null || userId.isBlank()) {
             throw new ApiException(USER_CONTEXT_NOT_FOUND);

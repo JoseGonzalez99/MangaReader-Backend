@@ -44,6 +44,16 @@ public class ChapterController {
         return ResponseUtil.success(view, "Capítulo encontrado", req);
     }
 
+
+
+
+
+
+
+
+
+
+
     @PostMapping("/admin/volumes/{volumeId}/chapters")
     @PreAuthorize("hasRole('STAFF')")
     public ResponseEntity<?> create(
