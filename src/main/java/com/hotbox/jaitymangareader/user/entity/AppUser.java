@@ -7,21 +7,25 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
 
-@Setter
-@Getter
+@Document(collection = "users")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Document(collection = "users")
 public class AppUser {
+
     @Id
     private String id;
 
     private String email;
-    private String password;
+    private String password; // puede ser null si el usuario viene solo por OAuth
     private Role role;
     private boolean enabled;
     private Instant createdAt;
 
+    // Nuevos campos para OAuth
+    private String fullName;
+    private String photoUrl;
+    private String provider;    // "google", "github", etc.
+    private String providerId;  // ID del proveedor
 }

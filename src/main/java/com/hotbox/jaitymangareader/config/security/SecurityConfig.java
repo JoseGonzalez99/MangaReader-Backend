@@ -38,7 +38,6 @@ public class SecurityConfig {
 
                         // 📂 3. Auth y registro (acceso libre)
                         .requestMatchers("/api/v1/auth/**").permitAll()
-
                         // 🛡️ 4. Zona administrativa (requiere STAFF)
                         .requestMatchers("/api/v1/admin/**").hasRole("STAFF")
 

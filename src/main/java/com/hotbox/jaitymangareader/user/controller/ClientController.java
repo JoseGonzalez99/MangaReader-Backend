@@ -29,6 +29,9 @@ public class ClientController {
 
     @GetMapping
     public ResponseEntity<?> getProfile(HttpServletRequest req, Authentication auth) {
+
+        System.out.println("Auth: " + auth);
+        System.out.println("Authorities: " + auth.getAuthorities());
         AppUser user = userService.findByEmail(auth.getName())
                 .orElseThrow(() -> new ApiException(ErrorCode.USER_NOT_FOUND));
 
@@ -43,6 +46,8 @@ public class ClientController {
 
         AppUser user = getUserFromAuth(auth);
         user.setEmail(request.email());
+        user.setFullName(request.fullName());
+        user.setPhotoUrl(request.photoUrl());
 
         AppUser updated = userService.save(user);
         return ResponseUtil.success(updated, "Perfil actualizado correctamente", req);

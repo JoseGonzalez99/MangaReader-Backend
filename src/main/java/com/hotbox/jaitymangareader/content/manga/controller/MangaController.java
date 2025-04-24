@@ -24,8 +24,10 @@ public class MangaController {
     private final MangaService mangaService;
 
     @GetMapping("/mangas")
-    public ResponseEntity<?> getAll(HttpServletRequest request) {
-        List<Manga> all = mangaService.findAll();
+    public ResponseEntity<?> getAll(
+            @RequestParam(required = false) String query,
+            HttpServletRequest request) {
+        List<Manga> all = mangaService.findAll(query);
         List<MangaPublicView> views = all.stream()
                 .map(MangaPublicView::from)
                 .toList();

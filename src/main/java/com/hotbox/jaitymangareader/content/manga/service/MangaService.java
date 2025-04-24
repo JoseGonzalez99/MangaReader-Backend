@@ -18,9 +18,14 @@ public class MangaService {
 
     private final MangaRepository mangaRepo;
 
-    public List<Manga> findAll() {
-        return mangaRepo.findAll();
+
+    public List<Manga> findAll(String query) {
+        if (query == null || query.isBlank()) {
+            return mangaRepo.findAll();
+        }
+        return mangaRepo.searchByTitleOrAuthor(query);
     }
+
 
     public Manga findById(UUID id) {
         return mangaRepo.findById(id)

@@ -78,6 +78,8 @@ public class AuthController {
         }
 
         AppUser user = AppUser.builder()
+                .fullName(request.fullName())
+                .photoUrl(request.photoUrl())
                 .email(request.email())
                 .password(passwordEncoder.encode(request.password()))
                 .role(Role.CLIENT)

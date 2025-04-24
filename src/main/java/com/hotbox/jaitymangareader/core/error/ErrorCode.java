@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 @Getter
 public enum ErrorCode implements BaseErrorCode {
 
-    AUTH_INVALID_CREDENTIALS("AUTH-001", "El correo o la contraseña son incorrectos", HttpStatus.UNAUTHORIZED),
+    AUTH_INVALID_CREDENTIALS("AUTH-001", "El correo o la contraseña son incorrectos", HttpStatus.FORBIDDEN),
     AUTH_ACCOUNT_DISABLED("AUTH-002", "Tu cuenta ha sido desactivada", HttpStatus.FORBIDDEN),
     AUTH_TOKEN_INVALID("AUTH-003", "Token inválido o expirado", HttpStatus.UNAUTHORIZED),
     AUTH_REFRESH_REVOKED("AUTH-004", "El token de sesión ya no es válido", HttpStatus.FORBIDDEN),

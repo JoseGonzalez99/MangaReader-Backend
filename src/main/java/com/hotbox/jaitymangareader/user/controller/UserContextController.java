@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
 import java.util.List;
 
-import static com.hotbox.jaitymangareader.core.error.DomainErrorCode.*;
 
 @RestController
 @RequestMapping("/api/v1/me/context")
