@@ -33,3 +33,5 @@ build/
 .vscode/
 
 ./jmanga-7d2f0-firebase-adminsdk-fbsvc-a0318734a3.json
+.env
+.env.*

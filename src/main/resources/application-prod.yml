@@ -1,19 +1,41 @@
 spring:
-  config:
-    activate:
-      on-profile: prod
-
   data:
     mongodb:
-      uri: mongodb+srv://usuario:clave@cluster.mongodb.net/jaity_prod
+      uri: ${MONGODB_URI}  # <- ejemplo: mongo sería el nombre del contenedor si usás Docker
+
+  datasource:
+    url: ${POSTGRES_DB_JDBC}  # <- ejemplo: postgres nombre del contenedor o IP
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+
+  jpa:
+    hibernate:
+      ddl-auto: validate   # ✅ Nunca actualizar la DB automáticamente en prod
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+    database: postgresql
 
   security:
     user:
-      name:
-      password:  # ⚠️ No uses esto en real sin encriptación
+      name: ${ADMIN_USERNAME:admin}
+      password: ${ADMIN_PASSWORD:admin}
 
 app:
   jwt:
-    secret: ${JWT_SECRET} # usa variable de entorno
-  audit:
-    ttl-days: 90          # guarda logs por 90 días
+    secret: ${JWT_SECRET}
+    expiration: 3600000
+    refresh-expiration: 604800000
+
+logging:
+  level:
+    org.springframework: INFO
+    org.springdoc: INFO
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method

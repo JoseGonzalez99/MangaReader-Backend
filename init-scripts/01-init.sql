@@ -1,5 +1,7 @@
 -- Asegúrate de tener instalada la extensión uuid-ossp para UUIDs
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
+
 
 -- Tabla de Mangas
 CREATE TABLE mangas (
@@ -131,3 +133,6 @@ CREATE INDEX idx_chapters_volume_id ON chapters(volume_id);
 CREATE INDEX idx_chapter_sources_chapter_id ON chapter_sources(chapter_id);
 CREATE INDEX idx_chapter_sources_provider_id ON chapter_sources(provider_id);
 CREATE INDEX idx_pages_chapter_source_id ON pages(chapter_source_id);
+CREATE INDEX idx_title_trgm ON mangas USING gin (title gin_trgm_ops);
+CREATE INDEX idx_author_trgm ON mangas USING gin (author gin_trgm_ops);
+
